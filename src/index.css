@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Hide scrollbar for horizontal scroll containers */
+.services-scroll::-webkit-scrollbar {
+  display: none;
+}

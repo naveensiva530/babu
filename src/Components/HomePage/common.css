@@ -1,0 +1,56 @@
+/* ========================================
+   HomePage Common Styles
+   CSS Variables for Colors & Fonts
+   ======================================== */
+
+:root {
+  /* ─── Primary Colors ─── */
+  --primary-dark:        #1e2f57;   /* dark navy  */
+  --primary-white:       #ffffff;
+
+  /* ─── Brand Blues ─── */
+  --brand-navy:          #1e2f57;   /* #1e2f57 – darkest navy        */
+  --brand-blue:          #406b9e;   /* #406b9e – medium blue         */
+  --brand-steel:         #3f6a93;   /* #3f6a93 – steel / slate blue  */
+
+  /* ─── Brand Yellows / Oranges ─── */
+  --brand-yellow:        #f1d511;   /* #f1d511 – bright yellow       */
+  --brand-amber:         #e4aa24;   /* #e4aa24 – golden amber        */
+  --brand-orange:        #e08326;   /* #e08326 – warm orange         */
+  --brand-red-orange:    #ef582e;   /* #ef582e – red-orange          */
+
+  /* ─── Background Colors ─── */
+  --bg-light-purple:     #ddd0f5;
+  --bg-dark-navy:        #1e2f57;
+  --bg-blue:             #406b9e;
+
+  /* ─── Accent Colors (mapped to brand palette) ─── */
+  --accent-yellow:       #f1d511;
+  --accent-yellow-bright:#f1d511;
+  --accent-orange:       #e08326;
+  --accent-amber:        #e4aa24;
+  --accent-red-orange:   #ef582e;
+  --accent-green:        #059669;   /* kept for status indicators    */
+  --accent-pink:         #ef582e;   /* replaced with brand red-orange*/
+
+  /* ─── Text Colors ─── */
+  --text-dark:           #1e2f57;   /* navy  */
+  --text-dark-blue:      #1e2f57;
+  --text-secondary:      #3f6a93;   /* steel blue */
+  --text-gray:           #6b7fa3;   /* muted blue-gray  */
+  --text-light-gray:     #9aaac0;
+  --text-orange:         #e08326;
+
+  /* ─── Border Colors ─── */
+  --border-gray:         rgba(30, 47, 87, 0.10);
+  --border-gray-light:   rgba(30, 47, 87, 0.06);
+  --border-blue:         rgba(64, 107, 158, 0.20);
+
+  /* ─── Shadows ─── */
+  --shadow-light:        rgba(30, 47, 87, 0.12);
+  --shadow-medium:       rgba(30, 47, 87, 0.22);
+  --shadow-orange:       rgba(224, 131, 38, 0.30);
+
+  /* ─── Font Family ─── */
+  --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

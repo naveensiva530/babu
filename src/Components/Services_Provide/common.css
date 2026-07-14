@@ -1,0 +1,14 @@
+/* common.css for services_Provide pages */
+
+.service-page-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.service-hero-banner {
+  /* Add a default background image here if desired */
+  background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
