@@ -3,7 +3,7 @@ import Navbar from "../../Navbar/Navbar";
 import personImg from "../../../assets/Hero_image-removebg-preview.webp";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { FlowButton } from "../../../components/ui/FlowButton";
+import { FlowButton } from "../../../Components/ui/FlowButton";
 import "../common.css";
 
 gsap.registerPlugin(ScrollTrigger);

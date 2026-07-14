@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { LayoutGroup, motion, useScroll, useTransform } from 'motion/react';
-import { TextRotate } from '../../../components/ui/text-rotate';
+import { TextRotate } from '../../../Components/ui/text-rotate';
 import '../common.css';
 import processImg from '../../../assets/k (2).png';
 
