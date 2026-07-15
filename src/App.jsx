@@ -1,33 +1,41 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 
-// Import core pages
-import AboutPage from "./Components/Pages/AboutPage";
-import ProjectsPage from "./Components/Pages/ProjectsPage";
-import BlogPage from "./Components/Pages/BlogPage";
+// Lazy load all pages for code splitting
+const AboutPage = lazy(() => import("./Components/Pages/AboutPage"));
+const ProjectsPage = lazy(() => import("./Components/Pages/ProjectsPage"));
+const BlogPage = lazy(() => import("./Components/Pages/BlogPage"));
 
-// Import all 15 services
-import SocialMediaMarketing from "./Components/Services_Provide/SocialMediaMarketing";
-import PerformanceMarketing from "./Components/Services_Provide/PerformanceMarketing";
-import WebsiteDevelopment from "./Components/Services_Provide/WebsiteDevelopment";
-import InfluencerMarketing from "./Components/Services_Provide/InfluencerMarketing";
-import SEOServices from "./Components/Services_Provide/SEOServices";
-import VideoProduction from "./Components/Services_Provide/VideoProduction";
-import BrandingSolutions from "./Components/Services_Provide/BrandingSolutions";
-import DigitalConsulting from "./Components/Services_Provide/DigitalConsulting";
-import ContentWriting from "./Components/Services_Provide/ContentWriting";
-import InstagramMarketing from "./Components/Services_Provide/InstagramMarketing";
-import HealthCare from "./Components/Services_Provide/HealthCare";
-import RealEstate from "./Components/Services_Provide/RealEstate";
-import Education from "./Components/Services_Provide/Education";
-import ITTechSAAS from "./Components/Services_Provide/ITTechSAAS";
-import BeautyAndSalon from "./Components/Services_Provide/BeautyAndSalon";
+// Lazy load all 15 services
+const SocialMediaMarketing = lazy(() => import("./Components/Services_Provide/SocialMediaMarketing"));
+const PerformanceMarketing = lazy(() => import("./Components/Services_Provide/PerformanceMarketing"));
+const WebsiteDevelopment = lazy(() => import("./Components/Services_Provide/WebsiteDevelopment"));
+const InfluencerMarketing = lazy(() => import("./Components/Services_Provide/InfluencerMarketing"));
+const SEOServices = lazy(() => import("./Components/Services_Provide/SEOServices"));
+const VideoProduction = lazy(() => import("./Components/Services_Provide/VideoProduction"));
+const BrandingSolutions = lazy(() => import("./Components/Services_Provide/BrandingSolutions"));
+const DigitalConsulting = lazy(() => import("./Components/Services_Provide/DigitalConsulting"));
+const ContentWriting = lazy(() => import("./Components/Services_Provide/ContentWriting"));
+const InstagramMarketing = lazy(() => import("./Components/Services_Provide/InstagramMarketing"));
+const HealthCare = lazy(() => import("./Components/Services_Provide/HealthCare"));
+const RealEstate = lazy(() => import("./Components/Services_Provide/RealEstate"));
+const Education = lazy(() => import("./Components/Services_Provide/Education"));
+const ITTechSAAS = lazy(() => import("./Components/Services_Provide/ITTechSAAS"));
+const BeautyAndSalon = lazy(() => import("./Components/Services_Provide/BeautyAndSalon"));
+
+// Loading component
+const Loading = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 export default function App() {
   return (
     <Router>
-      <Routes>
+      <Suspense fallback={<Loading />}>
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
@@ -48,6 +56,7 @@ export default function App() {
         <Route path="/services/it-tech-saas" element={<ITTechSAAS />} />
         <Route path="/services/beauty-and-salon" element={<BeautyAndSalon />} />
       </Routes>
+      </Suspense>
     </Router>
   );
 }

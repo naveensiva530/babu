@@ -1,6 +1,6 @@
 import React from 'react';
 import { Monitor, Box, Users, Megaphone, Settings, Presentation, Smartphone, ArrowRight } from 'lucide-react';
-import { ConnoisseurStackInteractor } from '../../../components/ui/connoisseur-stack-interactor.jsx';
+import { ConnoisseurStackInteractor } from '../../../Components/ui/connoisseur-stack-interactor.jsx';
 
 export default function Projectsection() {
   return (

@@ -31,15 +31,17 @@ export default function Home() {
     // Connect Lenis to GSAP's ticker so ScrollTrigger stays in sync
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    // Store reference so we can remove it properly
+    const rafCallback = (time) => {
       lenis.raf(time * 1000);
-    });
+    };
 
+    gsap.ticker.add(rafCallback);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
       lenis.destroy();
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(rafCallback);
     };
   }, []);
 
