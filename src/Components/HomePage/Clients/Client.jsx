@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import client1 from '../../../assets/clients/client1.webp';
 import client2 from '../../../assets/clients/client2.webp';
@@ -20,6 +20,10 @@ import client17 from '../../../assets/clients/client17.webp';
 import client18 from '../../../assets/clients/client18.webp';
 import client19 from '../../../assets/clients/client19.webp';
 import '../common.css';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /* ─── Client Images ─────────────────────────────────────── */
 const clientImages = [
@@ -49,30 +53,76 @@ const LogoTrack = () => {
 };
 
 /* ─── Main Component ─────────────────────────────────────────── */
-const Client = () => (
-  <section className="client-section">
-    <div className="client-inner">
+const Client = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const trackRef = useRef(null);
 
-      {/* LEFT: Heading */}
-      <div className="client-heading-block">
-        <p className="client-heading-text">
-          Trusted By<br />Top Companies
-        </p>
-        <span className="client-heading-arrow">
-          <ArrowUpRight size={14} strokeWidth={2.5} />
-        </span>
-        {/* Divider */}
-        <div className="client-divider" />
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Heading block: fade up from below
+      gsap.fromTo(
+        headingRef.current,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      // Logo track: fade in slightly later
+      gsap.fromTo(
+        trackRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          delay: 0.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="client-section">
+      <div className="client-inner">
+
+        {/* LEFT: Heading */}
+        <div ref={headingRef} className="client-heading-block">
+          <p className="client-heading-text">
+            Trusted By<br />Top Companies
+          </p>
+          <span className="client-heading-arrow">
+            <ArrowUpRight size={14} strokeWidth={2.5} />
+          </span>
+          {/* Divider */}
+          <div className="client-divider" />
+        </div>
+
+        {/* RIGHT: Scrolling Logos */}
+        <div ref={trackRef} className="client-logos-area">
+          <LogoTrack />
+        </div>
+
       </div>
 
-      {/* RIGHT: Scrolling Logos */}
-      <div className="client-logos-area">
-        <LogoTrack />
-      </div>
-
-    </div>
-
-    <style>{`
+      <style>{`
       /* ── Section Wrapper ── */
       .client-section {
         width: 100%;
@@ -229,7 +279,8 @@ const Client = () => (
         }
       }
     `}</style>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Client;

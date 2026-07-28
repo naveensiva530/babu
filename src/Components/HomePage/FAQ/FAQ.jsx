@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import faqimg from '../../../assets/j.png';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const faqs = [
   {
@@ -25,19 +29,73 @@ const faqs = [
 ];
 
 export default function FAQ() {
-  const [openId, setOpenId] = useState(4); // Default open 4th item, as in the new image
+  const [openId, setOpenId] = useState(4); // Default open 4th item
+
+  const sectionRef = useRef(null);
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
+  const statsRef = useRef(null);
+  const accordionRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // FAQ heading: fade up
+      gsap.fromTo(
+        leftRef.current.querySelector('.faq-header'),
+        { y: 40, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 82%', toggleActions: 'play none none reverse' },
+        }
+      );
+
+      // Left content block: slide from left
+      gsap.fromTo(
+        accordionRef.current,
+        { x: -60, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 1, delay: 0.15, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', toggleActions: 'play none none reverse' },
+        }
+      );
+
+      // Right image: slide from right
+      gsap.fromTo(
+        rightRef.current,
+        { x: 60, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 78%', toggleActions: 'play none none reverse' },
+        }
+      );
+
+      // Stats pills: stagger up
+      if (statsRef.current) {
+        gsap.fromTo(
+          statsRef.current.querySelectorAll('div.flex.items-center.bg-\\[\\#1f2937\\]'),
+          { y: 40, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+            scrollTrigger: { trigger: statsRef.current, start: 'top 85%', toggleActions: 'play none none reverse' },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div className="flex flex-col w-full">
+    <div ref={sectionRef} className="flex flex-col w-full">
       {/* FAQ Section */}
       <section className="w-full bg-white pt-24 font-sans overflow-hidden z-10 relative">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 flex flex-col lg:flex-row gap-16 lg:items-end">
 
           {/* Left Side: Content & Accordion */}
-          <div className="w-full lg:w-1/2 flex flex-col z-10 pb-16 lg:pb-24">
+          <div ref={leftRef} className="w-full lg:w-1/2 flex flex-col z-10 pb-16 lg:pb-24">
 
             {/* Header */}
-            <div className="mb-10">
+            <div className="faq-header mb-10">
               <div className="text-[#ff5b2e] text-[13px] font-bold tracking-widest uppercase mb-4 flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
@@ -50,7 +108,7 @@ export default function FAQ() {
             </div>
 
             {/* Accordion List */}
-            <div className="flex flex-col gap-4">
+            <div ref={accordionRef} className="flex flex-col gap-4">
               {faqs.map(faq => {
                 const isOpen = openId === faq.id;
                 return (
@@ -85,7 +143,7 @@ export default function FAQ() {
           </div>
 
           {/* Right Side: Image Placeholder */}
-          <div className="w-full lg:w-1/2 relative min-h-[400px] lg:min-h-[550px] flex items-end justify-center mt-10 lg:mt-0">
+          <div ref={rightRef} className="w-full lg:w-1/2 relative min-h-[400px] lg:min-h-[550px] flex items-end justify-center mt-10 lg:mt-0">
 
             {/* Decorative background elements */}
             <div className="absolute top-[10%] left-[10%] text-[#ff5b2e] opacity-80 z-0 hidden lg:block">
@@ -114,7 +172,7 @@ export default function FAQ() {
       </section>
 
       {/* Stats Section */}
-      <section className="w-full bg-[#ddd0f5] relative font-sans pt-24 pb-48 md:pb-56 z-0">
+      <section ref={statsRef} className="w-full bg-[#ddd0f5] relative font-sans pt-24 pb-48 md:pb-56 z-0">
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 flex flex-col md:flex-row gap-16 justify-between items-center relative z-10">
 
           {/* Left Side */}

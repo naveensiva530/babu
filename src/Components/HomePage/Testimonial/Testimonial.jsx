@@ -1,355 +1,338 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Quote, Star, ArrowLeft, ArrowRight, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
+import { LayoutGroup, motion } from 'framer-motion';
+import { TextRotate } from '../../ui/text-rotate';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import '../common.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
+    id: 1,
+    name: "Darrell Steward",
+    role: "Designer at Themexriver",
+    quote: "Their expert team provided exceptional digital solutions, making our brand more competitive and successful in today's market.",
+    rating: "5.0",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    id: 2,
+    name: "Guy Hawkins",
+    role: "Designer at Themexriver",
+    quote: "Their expert team provided exceptional digital solutions, making our brand more competitive and successful in today's market.",
+    rating: "5.0",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    id: 3,
+    name: "Esther Howard",
+    role: "Designer at Themexriver",
+    quote: "Their expert team provided exceptional digital solutions, making our brand more competitive and successful in today's market.",
+    rating: "5.0",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    id: 4,
+    name: "Ralph Edwards",
+    role: "Designer at Themexriver",
+    quote: "Their expert team provided exceptional digital solutions, making our brand more competitive and successful in today's market.",
+    rating: "5.0",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80"
+  },
+  {
+    id: 5,
     name: "Sarah Jenkins",
-    role: "Marketing Director",
-    company: "TechVision Inc.",
-    quote: "Working with this team has completely transformed our online presence. The attention to detail and strategic thinking delivered results well beyond our expectations.",
-    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&q=80",
-    stat: "+312%", statLabel: "ROI Increase",
-    tag: "ROI"
-  },
-  {
-    name: "Marcus Johnson",
-    role: "CEO & Founder",
-    company: "GrowthLabs",
-    quote: "A brilliant team that executes flawlessly and always delivers on time. Their digital marketing strategies tripled our qualified leads in just 90 days.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-    stat: "3x", statLabel: "Lead Growth",
-    tag: "GROWTH"
-  },
-  {
-    name: "Jessica Taylor",
-    role: "E-commerce Manager",
-    company: "StyleHouse",
-    quote: "Our conversion rates doubled after implementing their UX suggestions and ad campaigns. The return on investment has been absolutely phenomenal.",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
-    stat: "2x", statLabel: "Conversions",
-    tag: "SALES"
-  },
-  {
-    name: "David Chen",
-    role: "Head of Growth",
-    company: "ScaleUp Digital",
-    quote: "From strategy to execution, everything was handled professionally. Our brand awareness grew significantly and so did our revenue month after month.",
-    avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
-    stat: "89%", statLabel: "Brand Lift",
-    tag: "BRAND"
+    role: "Designer at Themexriver",
+    quote: "Their expert team provided exceptional digital solutions, making our brand more competitive and successful in today's market.",
+    rating: "5.0",
+    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=300&q=80"
   }
 ];
 
-export default function Testimonial() {
-  const [current, setCurrent]     = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState(1); // 1=forward, -1=backward
-  const timeoutRef = useRef(null);
+// Duplicated array for seamless infinite looping
+const extendedTestimonials = [...testimonials, ...testimonials, ...testimonials];
 
-  const goTo = (next, dir = 1) => {
-    if (animating) return;
-    setDirection(dir);
-    setAnimating(true);
-    setTimeout(() => {
-      setCurrent(next);
-      setAnimating(false);
-    }, 350);
+export default function Testimonial() {
+  const [currentIndex, setCurrentIndex] = useState(testimonials.length);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+  const autoPlayRef = useRef(null);
+  const sectionRef = useRef(null);
+  const cardBoxRef = useRef(null);
+
+  const handleNext = () => {
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
   };
 
-  const goPrev = () => goTo((current - 1 + testimonials.length) % testimonials.length, -1);
-  const goNext = () => goTo((current + 1) % testimonials.length, 1);
+  const handlePrev = () => {
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev - 1);
+  };
 
-  // Auto-advance
+  // Seamless infinite loop reset logic
   useEffect(() => {
-    timeoutRef.current = setTimeout(goNext, 5000);
-    return () => clearTimeout(timeoutRef.current);
-  }, [current]);
+    if (currentIndex >= testimonials.length * 2) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(testimonials.length);
+      }, 700);
+      return () => clearTimeout(timer);
+    } else if (currentIndex < testimonials.length) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(testimonials.length * 2 - 1);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex]);
 
-  const t = testimonials[current];
+  // Automatic 4s smooth auto-play carousel
+  useEffect(() => {
+    autoPlayRef.current = setInterval(() => {
+      handleNext();
+    }, 4000);
+    return () => clearInterval(autoPlayRef.current);
+  }, [currentIndex]);
+
+  const handleDotClick = (index) => {
+    setIsTransitioning(true);
+    setCurrentIndex(testimonials.length + index);
+  };
+
+  // Scroll Trigger entrance animation for card box
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        cardBoxRef.current,
+        {
+          opacity: 0,
+          y: 40,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const activeDotIndex = currentIndex % testimonials.length;
 
   return (
-    <section
-      className="w-full py-24 md:py-32 relative overflow-hidden"
-      style={{ background: 'var(--primary-white)', fontFamily: 'var(--font-primary)' }}
-    >
+    <section ref={sectionRef} className="w-full py-12 md:py-20 relative overflow-hidden bg-white font-sans">
 
-      {/* ── Background decoration ───────────────────── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Large navy circle top-left */}
-        <div
-          className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full"
-          style={{ background: 'var(--bg-light-purple)', opacity: 0.5 }}
-        />
-        {/* Orange glow bottom-right */}
-        <div
-          className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full blur-3xl"
-          style={{ background: 'rgba(224,131,38,0.12)' }}
-        />
-        {/* Subtle grid lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="tgrid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1e2f57" strokeWidth="1"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#tgrid)" />
-        </svg>
+      {/* ── Heading matching Process.jsx format ── */}
+      <div className="flex flex-col items-center justify-center gap-3 mb-10 md:mb-14 relative z-10 px-4">
+
+
+        <LayoutGroup>
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-x-3 gap-y-1 text-[32px] sm:text-[42px] md:text-[48px] font-extrabold leading-[1.15] tracking-tight text-center flex-wrap"
+            layout
+            style={{ color: 'var(--brand-navy)' }}
+          >
+            <motion.span layout transition={{ type: 'spring', damping: 30, stiffness: 400 }} className="whitespace-nowrap">
+              What Our Clients
+            </motion.span>
+
+            <TextRotate
+              texts={['Say ✦', 'Share', 'Experience', 'Achieve', 'Think']}
+              mainClassName="text-white px-4 py-1 overflow-hidden rounded-xl justify-center shadow-md"
+              style={{ background: 'var(--brand-navy)' }}
+              staggerFrom="last"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '-120%' }}
+              staggerDuration={0.03}
+              splitLevelClassName="overflow-hidden pb-0.5"
+              transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+              rotationInterval={2500}
+            />
+          </motion.div>
+        </LayoutGroup>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 relative z-10">
-
-        {/* ── Heading ───────────────────────────────── */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 rounded-full" style={{ background: 'var(--accent-orange)' }} />
-            <span
-              className="text-[13px] uppercase tracking-widest font-semibold"
-              style={{ color: 'var(--text-gray)' }}
-            >
-              Client Stories
-            </span>
-          </div>
-
-          <h2
-            className="text-[38px] md:text-[50px] font-extrabold leading-[1.15] tracking-tight mb-4"
-            style={{ color: 'var(--text-dark-blue)' }}
-          >
-            What Our{' '}
-            <span
-              className="px-4 py-1 rounded-xl inline-block"
-              style={{ background: 'var(--text-dark-blue)', color: '#fff' }}
-            >
-              Clients
-            </span>
-            {' '}Say
-          </h2>
-
-          <p
-            className="text-[15px] max-w-[480px] mx-auto leading-relaxed"
-            style={{ color: 'var(--text-gray)' }}
-          >
-            Don't just take our word for it — hear from some of our amazing clients.
-          </p>
-        </div>
-
-        {/* ── Main card + side mini cards layout ────── */}
-        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-
-          {/* ── LEFT: Previous card (mini) ── */}
-          <div className="hidden lg:flex flex-col justify-center w-64 flex-shrink-0">
-            {(() => {
-              const prev = testimonials[(current - 1 + testimonials.length) % testimonials.length];
-              return (
-                <button
-                  onClick={goPrev}
-                  className="w-full text-left rounded-2xl p-5 transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: 'var(--bg-light-purple)',
-                    border: '1px solid var(--border-gray)',
-                    opacity: 0.7
-                  }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <img src={prev.avatar} alt={prev.name} className="w-10 h-10 rounded-full object-cover" />
-                    <div>
-                      <div className="font-bold text-[13px]" style={{ color: 'var(--text-dark-blue)' }}>{prev.name}</div>
-                      <div className="text-[11px]" style={{ color: 'var(--text-gray)' }}>{prev.company}</div>
-                    </div>
-                  </div>
-                  <p className="text-[12px] leading-relaxed line-clamp-3" style={{ color: 'var(--text-gray)' }}>
-                    "{prev.quote}"
-                  </p>
-                </button>
-              );
-            })()}
-          </div>
-
-          {/* ── CENTER: Active testimonial card ── */}
-          <div className="flex-1">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 relative">
+        {/* Main Outer Container with background: var(--bg-light-purple) and borderRadius: 40px */}
+        <div
+          ref={cardBoxRef}
+          className="p-4 sm:p-6 md:p-8 shadow-[0_15px_40px_rgba(30,47,87,0.08)] relative z-10"
+          style={{
+            background: 'var(--bg-light-purple)',
+            borderRadius: '40px',
+            opacity: 0,
+          }}
+        >
+          {/* Continuous Smooth Slider Track */}
+          <div className="overflow-hidden py-1 w-full">
             <div
-              className="rounded-3xl p-8 md:p-12 relative overflow-hidden h-full"
+              className={`flex gap-4 md:gap-5 ${isTransitioning ? 'transition-transform duration-700 ease-in-out' : ''
+                }`}
               style={{
-                background: 'var(--text-dark-blue)',
-                boxShadow: '0 30px 80px rgba(30,47,87,0.30)',
+                transform: `translateX(calc(-${currentIndex} * (360px + 1.25rem)))`,
               }}
             >
-              {/* Card background decoration */}
-              <div
-                className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-                style={{ background: 'rgba(224,131,38,0.15)', transform: 'translate(30%, -30%)' }}
-              />
-              <div
-                className="absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl pointer-events-none"
-                style={{ background: 'rgba(221,208,245,0.08)', transform: 'translate(-20%, 20%)' }}
-              />
-
-              {/* Tag */}
-              <div className="flex items-center justify-between mb-8 relative z-10">
-                <span
-                  className="text-[11px] font-bold uppercase tracking-[3px] px-3 py-1 rounded-full"
-                  style={{ background: 'rgba(224,131,38,0.2)', color: 'var(--accent-orange)' }}
-                >
-                  {t.tag}
-                </span>
-                {/* Stars */}
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" style={{ color: 'var(--accent-orange)' }} />
-                  ))}
-                </div>
-              </div>
-
-              {/* Quote icon */}
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 relative z-10"
-                style={{ background: 'var(--accent-orange)' }}
-              >
-                <Quote className="w-7 h-7 text-white" />
-              </div>
-
-              {/* Quote text — animated */}
-              <blockquote
-                className="text-[19px] md:text-[23px] leading-[1.75] font-medium mb-10 relative z-10"
-                style={{
-                  color: '#fff',
-                  opacity: animating ? 0 : 1,
-                  transform: animating
-                    ? `translateX(${direction * 30}px)`
-                    : 'translateX(0)',
-                  transition: 'opacity 0.35s ease, transform 0.35s ease',
-                }}
-              >
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-
-              {/* Divider */}
-              <div
-                className="w-full h-px mb-8 relative z-10"
-                style={{ background: 'rgba(255,255,255,0.1)' }}
-              />
-
-              {/* Author + stat */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10"
-                style={{
-                  opacity: animating ? 0 : 1,
-                  transition: 'opacity 0.35s ease',
-                }}
-              >
-                {/* Author */}
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <img
-                      src={t.avatar}
-                      alt={t.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                      style={{ border: '3px solid var(--accent-orange)' }}
-                    />
-                    {/* Online dot */}
-                    <span
-                      className="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white"
-                      style={{ background: '#22c55e', borderColor: 'var(--text-dark-blue)' }}
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-white text-[17px]">{t.name}</div>
-                    <div className="text-[13px]" style={{ color: 'var(--text-gray)' }}>{t.role}</div>
-                    <div className="text-[12px] font-semibold" style={{ color: 'var(--accent-orange)' }}>{t.company}</div>
-                  </div>
-                </div>
-
-                {/* Stat badge */}
+              {extendedTestimonials.map((item, idx) => (
                 <div
-                  className="flex items-center gap-4 rounded-2xl px-6 py-4"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.10)' }}
+                  key={`${item.id}-${idx}`}
+                  className="flex-shrink-0 w-[290px] sm:w-[330px] md:w-[360px] bg-white rounded-2xl p-4 md:p-5 flex flex-col justify-between shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]"
+                  style={{
+                    border: '1px solid rgba(30, 47, 87, 0.08)',
+                  }}
                 >
-                  <TrendingUp className="w-5 h-5" style={{ color: 'var(--accent-orange)' }} />
-                  <div className="text-center">
-                    <div className="text-[30px] font-extrabold leading-none" style={{ color: 'var(--accent-orange)' }}>
-                      {t.stat}
+                  {/* Top Row: Rating & Avatar */}
+                  <div>
+                    <div className="flex items-start justify-between gap-2.5 mb-2">
+                      {/* Rating & Stars Pill Badge */}
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1">
+                          <span className="font-extrabold text-sm md:text-base" style={{ color: 'var(--brand-navy)' }}>
+                            {item.rating}
+                          </span>
+                          <span className="text-[11px] md:text-xs font-medium" style={{ color: 'var(--brand-steel)' }}>
+                            Rating
+                          </span>
+                        </div>
+                        <div
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full shadow-2xs"
+                          style={{ background: 'var(--brand-yellow)' }}
+                        >
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className="w-3 h-3 fill-current text-[#1e2f57]"
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Compact Avatar Image */}
+                      <img
+                        src={item.avatar}
+                        alt={item.name}
+                        className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover shadow-2xs border-2 border-white flex-shrink-0"
+                      />
                     </div>
-                    <div className="text-[11px] uppercase tracking-wider mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                      {t.statLabel}
+
+                    {/* Name & Role */}
+                    <div className="text-left my-2">
+                      <h3
+                        className="text-sm md:text-base font-bold tracking-tight mb-0.5"
+                        style={{ color: 'var(--brand-navy)' }}
+                      >
+                        {item.name}
+                      </h3>
+                      <p
+                        className="text-[11px] md:text-xs font-medium"
+                        style={{ color: 'var(--brand-steel)' }}
+                      >
+                        {item.role}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Compact Sleek Quote Box */}
+                  <div className="bg-slate-50/90 rounded-xl p-3.5 md:p-4 border border-slate-100 relative shadow-2xs mt-2 flex-1 flex flex-col justify-between min-h-[75px]">
+                    <p
+                      className="text-[12px] md:text-[13px] italic font-normal leading-relaxed mb-1"
+                      style={{ color: 'var(--brand-navy)' }}
+                    >
+                      "{item.quote}"
+                    </p>
+                    <div className="flex justify-end">
+                      <Quote
+                        className="w-3.5 h-3.5 rotate-180"
+                        style={{ color: 'var(--brand-steel)', opacity: 0.35 }}
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* ── RIGHT: Next card (mini) ── */}
-          <div className="hidden lg:flex flex-col justify-center w-64 flex-shrink-0">
-            {(() => {
-              const next = testimonials[(current + 1) % testimonials.length];
-              return (
-                <button
-                  onClick={goNext}
-                  className="w-full text-left rounded-2xl p-5 transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: 'var(--bg-light-purple)',
-                    border: '1px solid var(--border-gray)',
-                    opacity: 0.7
-                  }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <img src={next.avatar} alt={next.name} className="w-10 h-10 rounded-full object-cover" />
-                    <div>
-                      <div className="font-bold text-[13px]" style={{ color: 'var(--text-dark-blue)' }}>{next.name}</div>
-                      <div className="text-[11px]" style={{ color: 'var(--text-gray)' }}>{next.company}</div>
-                    </div>
-                  </div>
-                  <p className="text-[12px] leading-relaxed line-clamp-3" style={{ color: 'var(--text-gray)' }}>
-                    "{next.quote}"
-                  </p>
-                </button>
-              );
-            })()}
+          {/* Controls: Left/Right Arrow Buttons + 5 Dots */}
+          <div className="flex items-center justify-between gap-4 mt-6 pt-1">
+            {/* Left Arrow Button */}
+            <button
+              onClick={handlePrev}
+              aria-label="Previous Testimonial"
+              className="w-10 h-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center shadow-xs transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+              style={{ color: 'var(--brand-navy)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--brand-navy)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.color = 'var(--brand-navy)';
+              }}
+            >
+              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+            </button>
+
+            {/* Connecting Track Line with 5 Dots */}
+            <div className="flex-1 relative flex items-center justify-center mx-2 sm:mx-6 max-w-xs md:max-w-sm">
+              <div className="w-full h-[1px] bg-slate-300/60 absolute top-1/2 left-0 -translate-y-1/2 z-0" />
+              <div className="relative z-10 flex items-center gap-3 px-3 rounded-full" style={{ background: 'var(--bg-light-purple)' }}>
+                {testimonials.map((_, dotIdx) => {
+                  const isCurrent = dotIdx === activeDotIndex;
+                  return (
+                    <button
+                      key={dotIdx}
+                      onClick={() => handleDotClick(dotIdx)}
+                      aria-label={`Go to review ${dotIdx + 1}`}
+                      className="transition-all duration-300 cursor-pointer flex items-center justify-center"
+                    >
+                      {isCurrent ? (
+                        <div
+                          className="w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center shadow-2xs"
+                          style={{ borderColor: 'var(--brand-navy)' }}
+                        >
+                          <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ background: 'var(--brand-navy)' }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-3 h-3 rounded-full border-2 border-slate-400/80 bg-white hover:border-[var(--brand-navy)] transition-colors" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right Arrow Button */}
+            <button
+              onClick={handleNext}
+              aria-label="Next Testimonial"
+              className="w-10 h-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center shadow-xs transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+              style={{ color: 'var(--brand-navy)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--brand-navy)';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.color = 'var(--brand-navy)';
+              }}
+            >
+              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+            </button>
           </div>
         </div>
-
-        {/* ── Navigation ───────────────────────────── */}
-        <div className="flex items-center justify-center gap-6 mt-10">
-          <button
-            onClick={goPrev}
-            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
-            style={{
-              border: '1px solid var(--border-gray)',
-              background: 'var(--primary-white)',
-              color: 'var(--text-dark-blue)',
-              boxShadow: '0 2px 12px var(--shadow-light)',
-            }}
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-
-          {/* Dot indicators */}
-          <div className="flex gap-2 items-center">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i, i > current ? 1 : -1)}
-                className="rounded-full transition-all duration-300"
-                style={{
-                  width:  i === current ? 28 : 8,
-                  height: 8,
-                  background: i === current ? 'var(--accent-orange)' : 'var(--border-gray)',
-                }}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={goNext}
-            className="w-12 h-12 rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95"
-            style={{
-              background: 'var(--accent-orange)',
-              boxShadow: '0 4px 20px var(--shadow-orange)',
-            }}
-          >
-            <ArrowRight className="w-5 h-5" />
-          </button>
-        </div>
-
       </div>
     </section>
   );

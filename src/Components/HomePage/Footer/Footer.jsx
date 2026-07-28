@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import personImg from "../../../assets/g.png";
 import { Mail, Phone, ArrowRight, ArrowUp, ChevronRight } from "lucide-react";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import "../common.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /* ── Social icon SVGs ─────────────────────────────────────── */
 const FacebookIcon = () => (
@@ -30,8 +34,8 @@ const LinkedinIcon = () => (
 
 const socialLinks = [
   { icon: <FacebookIcon />, href: "#" },
-  { icon: <TwitterIcon />,  href: "#" },
-  { icon: <YoutubeIcon />,  href: "#" },
+  { icon: <TwitterIcon />, href: "#" },
+  { icon: <YoutubeIcon />, href: "#" },
   { icon: <LinkedinIcon />, href: "#" },
 ];
 
@@ -40,8 +44,33 @@ const quickLinks = [
 ];
 
 export default function Footer() {
+  const footerRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Fade up reveal for the entire footer
+      gsap.fromTo(
+        footerRef.current,
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 95%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <footer className="relative mt-32" style={{ fontFamily: "var(--font-primary)" }}>
+    <footer ref={footerRef} className="relative mt-32" style={{ fontFamily: "var(--font-primary)" }}>
 
       {/* ── CTA BANNER (pops above footer) ─────────────────────────── */}
       <div className="absolute left-0 right-0 -top-24 z-20 px-4 md:px-8 max-w-7xl mx-auto">
@@ -56,7 +85,7 @@ export default function Footer() {
             {/* dot pattern */}
             <div className="absolute left-10 top-10 opacity-20">
               <svg width="60" height="60" viewBox="0 0 60 60">
-                {[4,20,36,52].flatMap(x => [4,20,36,52].map(y => (
+                {[4, 20, 36, 52].flatMap(x => [4, 20, 36, 52].map(y => (
                   <circle key={`${x}-${y}`} cx={x} cy={y} r="2.5" fill="white" />
                 )))}
               </svg>

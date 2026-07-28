@@ -1,13 +1,82 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import person1 from "../../../assets/h.png";
 import person2 from "../../../assets/j.png";
 import person3 from "../../../assets/f.png"; // small camera-woman image on the right
 import { ArrowUpRight } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "../common.css";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function About() {
+  const sectionRef = useRef(null);
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
+  const statsRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Left image: slide in from left
+      gsap.fromTo(
+        leftRef.current,
+        { x: -80, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Right text: slide in from right
+      gsap.fromTo(
+        rightRef.current,
+        { x: 80, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1.1,
+          delay: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Stats: stagger fade-up
+      gsap.fromTo(
+        statsRef.current,
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.35,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className="w-full pt-10 pb-16 md:pt-12 md:pb-20 overflow-hidden relative"
       style={{ background: "var(--primary-white)", fontFamily: "var(--font-primary)" }}
     >
@@ -15,7 +84,7 @@ export default function About() {
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-10 items-center">
 
           {/* LEFT: Image Collage */}
-          <div className="w-full lg:w-[46%] relative min-h-[520px] flex items-center justify-center lg:justify-start z-10">
+          <div ref={leftRef} className="w-full lg:w-[46%] relative min-h-[520px] flex items-center justify-center lg:justify-start z-10">
             {/* Main blob image */}
             <div
               className="relative z-10 w-[360px] md:w-[400px] h-[420px] md:h-[580px] bg-white rounded-t-full rounded-b-[180px] md:rounded-b-[210px] flex items-center justify-center p-4"
@@ -40,7 +109,7 @@ export default function About() {
           </div>
 
           {/* RIGHT: Text Content */}
-          <div className="w-full lg:w-[54%] flex flex-col justify-center z-10 lg:pl-8">
+          <div ref={rightRef} className="w-full lg:w-[54%] flex flex-col justify-center z-10 lg:pl-8">
             {/* Eyebrow */}
             <div className="flex items-center gap-2 mb-4">
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white border border-gray-200 shadow-sm">
@@ -74,28 +143,20 @@ export default function About() {
               vision to life.
             </p>
 
-            {/* CTA */}
+            {/* CTA - Uiverse button style with brand colors */}
             <div className="mb-14">
               <button
-                className="group flex items-center gap-4 font-bold text-[13px] md:text-[14px] uppercase tracking-wide pl-8 pr-2 py-2 rounded-full transition-transform hover:-translate-y-1"
-                style={{
-                  background: "#1e293b", // Dark navy/slate
-                  color: "#ffffff",
-                  boxShadow: "0 10px 25px -5px rgba(30, 41, 59, 0.4)"
-                }}
+                className="know-more-btn"
               >
-                Know More Us
-                <span
-                  className="w-10 h-10 rounded-full flex items-center justify-center transition-transform group-hover:rotate-45"
-                  style={{ background: "#f97316" }}
-                >
-                  <ArrowUpRight className="w-5 h-5 text-white" strokeWidth={2.5} />
-                </span>
+                <span>Know More Us</span>
+                <div className="know-more-icon">
+                  <ArrowUpRight className="w-5 h-5" strokeWidth={2.5} />
+                </div>
               </button>
             </div>
 
             {/* Bottom Row: Stats & Image */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-8 mt-auto">
+            <div ref={statsRef} className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-8 mt-auto">
               {/* Stat */}
               <div className="flex items-start gap-1 max-w-[220px]">
                 <h4 className="text-[64px] md:text-[80px] font-black leading-none text-[#1a233a] tracking-tighter">

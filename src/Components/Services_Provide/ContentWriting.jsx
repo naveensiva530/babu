@@ -4,6 +4,9 @@ import Navbar from '../Navbar/Navbar';
 import Footer from '../HomePage/Footer/Footer';
 import './common.css';
 
+// Import local background image
+import bgImage from '../../assets/Services_Provide/Content Writing.webp';
+
 export default function ContentWriting() {
   return (
     <div className="service-page-wrapper font-sans bg-white min-h-screen flex flex-col">
@@ -13,10 +16,10 @@ export default function ContentWriting() {
       {/* Hero Header Banner */}
       <div className="service-hero-banner relative w-full h-[350px] md:h-[450px] flex items-center justify-center mt-[90px]">
         {/* Background Image Overlay */}
-                <div 
-          className="absolute inset-0 bg-[#111827]/85 z-0"
+        <div
+          className="absolute inset-0 bg-[#111827]/45 z-0"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80')",
+            backgroundImage: `url(${bgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundBlendMode: 'overlay'

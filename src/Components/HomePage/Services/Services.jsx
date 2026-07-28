@@ -2,6 +2,27 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "../common.css";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Import all service images from assets/Services folder
+import socialMediaImg from "../../../assets/Services/Social Media Marketing.webp";
+import performanceImg from "../../../assets/Services/Performance marketing.webp";
+import websiteDevImg from "../../../assets/Services/Website Development.webp";
+import influencerImg from "../../../assets/Services/Influncer Marketing.webp";
+import seoImg from "../../../assets/Services/SEO.webp";
+import videoImg from "../../../assets/Services/Video Production.webp";
+import brandingImg from "../../../assets/Services/Branding Solution.webp";
+import consultingImg from "../../../assets/Services/Digital consulting.webp";
+import contentImg from "../../../assets/Services/Content Writing.webp";
+import instagramImg from "../../../assets/Services/Instragram marketing.webp";
+import healthImg from "../../../assets/Services/Health Care.webp";
+import realEstateImg from "../../../assets/Services/Real Estate.webp";
+import educationImg from "../../../assets/Services/Education care.webp";
+import saasImg from "../../../assets/Services/IT-SAAS.webp";
+import beautyImg from "../../../assets/Services/Beauty & Salon.webp";
+
+gsap.registerPlugin(ScrollTrigger);
 
 import {
   ArrowUpRight,
@@ -16,63 +37,63 @@ import {
 const services = [
   {
     num: "01", tag: "MARKETING", title: "Social Media\nMarketing", icon: Globe,
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80",
+    image: socialMediaImg,
   },
   {
     num: "02", tag: "ADS", title: "Performance\nMarketing", icon: ArrowUpRight,
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80",
+    image: performanceImg,
   },
   {
     num: "03", tag: "WEB", title: "Website\nDevelopment", icon: UserCog,
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+    image: websiteDevImg,
   },
   {
     num: "04", tag: "INFLUENCER", title: "Influencer\nMarketing", icon: PersonStanding,
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    image: influencerImg,
   },
   {
     num: "05", tag: "SEO", title: "SEO\nServices", icon: Megaphone,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    image: seoImg,
   },
   {
     num: "06", tag: "VIDEO", title: "Video\nProduction", icon: UserCog,
-    image: "https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=800&q=80",
+    image: videoImg,
   },
   {
     num: "07", tag: "BRANDING", title: "Branding\nSolutions", icon: Megaphone,
-    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
+    image: brandingImg,
   },
   {
     num: "08", tag: "CONSULTING", title: "Digital\nConsulting", icon: PersonStanding,
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
+    image: consultingImg,
   },
   {
     num: "09", tag: "CONTENT", title: "Content\nWriting", icon: Megaphone,
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80",
+    image: contentImg,
   },
   {
     num: "10", tag: "SOCIAL", title: "Instagram\nMarketing", icon: Globe,
-    image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=800&q=80",
+    image: instagramImg,
   },
   {
     num: "11", tag: "HEALTH", title: "Health\nCare", icon: UserCog,
-    image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80",
+    image: healthImg,
   },
   {
     num: "12", tag: "REAL ESTATE", title: "Real\nEstate", icon: Globe,
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
+    image: realEstateImg,
   },
   {
     num: "13", tag: "EDUCATION", title: "Education\nSector", icon: PersonStanding,
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+    image: educationImg,
   },
   {
     num: "14", tag: "TECH", title: "IT-Tech\nSAAS", icon: Globe,
-    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
+    image: saasImg,
   },
   {
     num: "15", tag: "BEAUTY", title: "Beauty &\nSalon", icon: UserCog,
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+    image: beautyImg,
   },
 ];
 
@@ -93,6 +114,9 @@ export default function Services() {
   const [animated, setAnimated] = useState(true);
   const [hoveredKey, setHoveredKey] = useState(null);
   const trackRef = useRef(null); // ref to the sliding track div
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const carouselRef = useRef(null);
 
   // ── Bug fix: only react to the track's own "transform" transition end ──
   const handleTransitionEnd = useCallback((e) => {
@@ -125,15 +149,59 @@ export default function Services() {
 
   const translateX = `calc(-${idx} / ${EXT_LEN} * 100%)`;
 
+  // Scroll-triggered entrance animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Heading block slides up
+      gsap.fromTo(
+        headingRef.current,
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      // Carousel fades + scales in
+      gsap.fromTo(
+        carouselRef.current,
+        { y: 60, opacity: 0, scale: 0.97 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          delay: 0.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className="relative overflow-hidden pb-40 lg:pb-64 px-4 pt-32 md:pt-40"
       style={{ background: "var(--bg-light-purple)", fontFamily: "var(--font-primary)" }}
     >
       <div className="relative mx-auto max-w-7xl z-20">
 
         {/* ── TOP BAR: heading CENTERED (Process.jsx style), arrows RIGHT ── */}
-        <div className="relative mb-14 flex flex-col items-center justify-center text-center">
+        <div ref={headingRef} className="relative mb-14 flex flex-col items-center justify-center text-center">
 
           {/* ARROWS — absolutely right-positioned */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4">
@@ -184,7 +252,7 @@ export default function Services() {
         </div>
 
         {/* ── CAROUSEL VIEWPORT ─────────────────────────── */}
-        <div style={{ overflow: "hidden", paddingTop: "2.5rem", marginTop: "-2.5rem" }}>
+        <div ref={carouselRef} style={{ overflow: "hidden", paddingTop: "2.5rem", marginTop: "-2.5rem" }}>
           {/*
             Track width = EXT_LEN / CARDS_PER_VIEW × 100% of viewport
             → each card occupies exactly 25% of the viewport
